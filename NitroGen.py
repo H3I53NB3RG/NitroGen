@@ -64,51 +64,50 @@ class NitroGenerator:
             proxy_list = f.readlines()
 
         for proxy in proxy_list:
-                proxies = {'https': proxy.strip()}
-                print('=' * 78)
-                print(Fore.GREEN + '[+]' + Fore.RESET + ' Connecting To : [' + proxy[7:-1] + '] ...')
+            proxies = {'https': proxy.strip()}
+            print('=' * 78)
+            print(Fore.GREEN + '[+]' + Fore.RESET + ' Connecting To : ' + Fore.GREEN + proxy[7:-1] + Fore.RESET + ' ...')
 
-                #Genrating The Firt Code
-                code = self.gencode()
+            #Genrating The Firt Code
+            code = self.gencode()
 
-                try:
-                        #Starting a Session With This Proxy
-                        session = requests.Session()
-                        session.proxies.update(proxies)
+            try:
+                #Starting a Session With This Proxy
+                session = requests.Session()
+                session.proxies.update(proxies)
 
-                        print(Fore.GREEN + '[+]' + Fore.RESET + ' Session Started!')
+                print(Fore.GREEN + '[+]' + Fore.RESET + ' Session Started!')
 
-                        while True:
-                                response = session.get('https://discord.com/api/v7/entitlements/gift-codes/' + code + '?with_application=false&with_subscription_plan=true')
-                                data = response.json()
+                while True:
+                        response = session.get('https://discord.com/api/v7/entitlements/gift-codes/' + code + '?with_application=false&with_subscription_plan=true')
+                        data = response.json()
 
-                                if data["message"] == 'Unknown Gift Code':
-                                        numOfGeneratedCodes += 1
+                        if data["message"] == 'Unknown Gift Code':
+                                numOfGeneratedCodes += 1
 
-                                        
-                                        print(Fore.RED + Fore.RED + '[-]' + Fore.RESET + '' + Fore.RESET + ' Invalid Code : ' + code + '\t\t\t\t\t[' + Fore.GREEN + str(numOfGeneratedCodes) + ']')
-                                        self.breakLoop(numOfCodes, numOfworkingCodes)
-                                        
-                                elif data["message"] == 'You are being rate limited.':
-                                        print(Fore.RED + '[-]' + Fore.RESET + ' Proxy Is Being Rate Limited, Switching Proxy')
-                                        break
-                                    
-                                else:
-                                        numOfGeneratedCodes += 1
-                                        numOfworkingCodes += 1
-
-                                        print(Fore.GREEN + '[+]' + Fore.RESET + ' Valid Code : ' + code + '\t\t\t\t\t[' + Fore.GREEN + str(numOfGeneratedCodes) + ']')
-                                        
-                                        file = open("workedcodes.txt", "a+")
-                                        file.write("\n" + code + "\t" + data["subscription_plan"]["name"] + "\t" + data["expires_at"]) 
-
-                                        self.breakLoop(numOfCodes, numOfworkingCodes)
+                                print(Fore.RED + Fore.RED + '[-]' + Fore.RESET + '' + Fore.RESET + ' Invalid Code : ' + Fore.RED + code + Fore.RESET + '\t\t\t\t\t[' + Fore.GREEN + str(numOfGeneratedCodes) + Fore.RESET + ']')
+                                self.breakLoop(numOfCodes, numOfworkingCodes)
                                 
-                                code = self.gencode()
+                        elif data["message"] == 'You are being rate limited.':
+                                print(Fore.RED + '[-]' + Fore.RESET + ' Proxy Is Being Rate Limited, Switching Proxy')
+                                break
+                            
+                        else:
+                                numOfGeneratedCodes += 1
+                                numOfworkingCodes += 1
+
+                                print(Fore.GREEN + '[+]' + Fore.RESET + ' Valid Code : ' + Fore.GREEN + code + Fore.RESET + '\t\t\t\t\t[' + Fore.GREEN + str(numOfGeneratedCodes) + Fore.RESET + ']')
                                 
-                except Exception as e:
-                        print(Fore.RED + '[-]' + Fore.RESET + ' Faild To Connect, Switching Proxy ...')
-                        continue
+                                file = open("workedcodes.txt", "a+")
+                                file.write("\n" + code + "\t" + data["subscription_plan"]["name"] + "\t" + data["expires_at"]) 
+
+                                self.breakLoop(numOfCodes, numOfworkingCodes)
+                        
+                        code = self.gencode()
+                            
+            except Exception as e:
+                    print(Fore.RED + '[-]' + Fore.RESET + ' Faild To Connect, Switching Proxy ...')
+                    continue
 
         print('=' * 78)
         print(Fore.RED + '[-]' + Fore.RESET + ' No More Proxies To Use')
