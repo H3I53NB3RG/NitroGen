@@ -66,7 +66,7 @@ class NitroGenerator:
         for proxy in proxy_list:
             proxies = {'https': proxy.strip()}
             print('=' * 78)
-            print(Fore.GREEN + '[+]' + Fore.RESET + ' Connecting To : ' + Fore.GREEN + proxy[7:-1] + Fore.RESET + ' ...')
+            print(Fore.GREEN + '[+]' + Fore.RESET + ' Connecting To : ' + Fore.GREEN + proxy[7:-1])
 
             #Genrating The Firt Code
             code = self.gencode()
